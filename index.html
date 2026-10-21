@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#8fd3ff">
+<title>Financial Management for KIDS — Open World Treasure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:#8fd3ff;
+    font-family:'Baloo 2','Trebuchet MS',system-ui,sans-serif;color:#243b53;
+    user-select:none;-webkit-user-select:none}
+  #scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  .hidden{display:none!important}
+
+  /* ================= MENU / SCREENS ================= */
+  .screen{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+    padding:16px;overflow-y:auto;
+    background:linear-gradient(165deg,#a8e6ff 0%,#d9f5c8 40%,#ffe6a8 70%,#ffc9e6 100%)}
+  .card{background:#fff;border-radius:28px;padding:20px;width:100%;max-width:430px;
+    box-shadow:0 10px 0 rgba(0,0,0,.13),0 22px 44px rgba(0,0,0,.28);
+    border:5px solid #fff;position:relative}
+  .title{font-size:26px;font-weight:800;line-height:1.1;text-align:center;
+    background:linear-gradient(90deg,#3d8ef0,#f45fa8,#f5b400);
+    -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px}
+  .subtitle{text-align:center;font-size:13px;color:#6b7f95;margin-bottom:14px;font-weight:600}
+  .sect{font-size:13px;font-weight:800;color:#3d8ef0;margin:12px 0 6px;letter-spacing:.4px}
+
+  .btn{border:none;border-radius:16px;padding:13px 16px;font-family:inherit;font-weight:800;
+    font-size:15px;color:#fff;background:linear-gradient(#5cb8ff,#3d8ef0);
+    box-shadow:0 5px 0 #2b6fc4;cursor:pointer;transition:transform .07s,box-shadow .07s;width:100%}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #2b6fc4}
+  .btn.green{background:linear-gradient(#7ee787,#3fbf55);box-shadow:0 5px 0 #2b8c3e}
+  .btn.yellow{background:linear-gradient(#ffd95c,#f5b400);box-shadow:0 5px 0 #c08c00;color:#5a3d00}
+  .btn.pink{background:linear-gradient(#ff9ccf,#f45fa8);box-shadow:0 5px 0 #c03b7c}
+  .btn.grey{background:linear-gradient(#c7d3e0,#9fb0c2);box-shadow:0 5px 0 #7a8b9d;color:#2b3c4d}
+  .btn.small{padding:9px 12px;font-size:13px;border-radius:13px;width:auto}
+
+  .diffRow{display:flex;flex-direction:column;gap:8px}
+  .diffOpt{border-radius:18px;padding:12px 14px;border:3px solid #e3ecf5;background:#f7fbff;
+    cursor:pointer;transition:.15s;display:flex;justify-content:space-between;align-items:center}
+  .diffOpt.sel{border-color:#3d8ef0;background:#e8f3ff;transform:scale(1.02);
+    box-shadow:0 4px 0 #b9d8ff}
+  .diffOpt b{font-size:16px}
+  .diffOpt small{display:block;font-size:11px;color:#6b7f95;font-weight:600}
+  .diffOpt .badge{font-size:11px;font-weight:800;padding:4px 9px;border-radius:10px;background:#dff0ff;color:#2b6fc4}
+
+  .incRow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .incOpt{border-radius:15px;padding:10px 6px;border:3px solid #e3ecf5;background:#f7fbff;
+    text-align:center;font-weight:800;font-size:12px;cursor:pointer;transition:.15s}
+  .incOpt.sel{border-color:#f45fa8;background:#ffeaf5;box-shadow:0 4px 0 #ffc3e2}
+  .incOpt small{display:block;font-size:10px;color:#6b7f95;font-weight:700}
+
+  /* ================= HUD ================= */
+  #hud{position:fixed;inset:0;z-index:20;pointer-events:none}
+  #hud button, #hud #joystick, #hud #actionBtn{pointer-events:auto}
+
+  #topbar{position:absolute;top:calc(8px + env(safe-area-inset-top));left:8px;right:8px;
+    display:flex;gap:6px;justify-content:space-between}
+  .pill{background:rgba(255,255,255,.95);border-radius:15px;padding:6px 12px;
+    font-weight:800;font-size:13px;box-shadow:0 3px 0 rgba(0,0,0,.13);white-space:nowrap}
+  .pill.money{color:#2b8c3e}
+  .pill.score{color:#c08c00}
+
+  #statbar{position:absolute;top:calc(46px + env(safe-area-inset-top));left:8px;width:158px;
+    display:flex;flex-direction:column;gap:6px}
+  #hearts{display:flex;gap:1px;font-size:15px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+  .heart{opacity:.22;filter:grayscale(1);transition:.2s}
+  .heart.full{opacity:1;filter:none;transform:scale(1.05)}
+  #satWrap{position:relative;height:18px;background:rgba(255,255,255,.95);border-radius:10px;
+    overflow:hidden;box-shadow:0 3px 0 rgba(0,0,0,.13)}
+  #satFill{height:100%;width:0%;background:linear-gradient(90deg,#ffd23f,#ff8a3d);
+    transition:width .35s ease;border-radius:10px}
+  #satTxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-weight:800;color:#5a3d00;letter-spacing:.3px}
+
+  #taskPanel{position:absolute;top:calc(96px + env(safe-area-inset-top));left:8px;
+    display:flex;flex-direction:column;gap:4px;width:158px}
+  .task{background:rgba(255,255,255,.92);border-radius:11px;padding:5px 9px;font-size:11px;
+    font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.1);color:#5a6b7d}
+  .task.done{background:rgba(126,231,135,.95);color:#1e6b2c}
+
+  /* compass */
+  #compass{position:absolute;top:calc(46px + env(safe-area-inset-top));right:8px;
+    width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.93);
+    box-shadow:0 4px 0 rgba(0,0,0,.13);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:1px}
+  #compassArrow{font-size:20px;line-height:1;color:#f5a623;transition:transform .15s linear;
+    text-shadow:0 2px 3px rgba(0,0,0,.25)}
+  #compassTxt{font-size:9px;font-weight:800;color:#6b7f95}
+
+  /* toast */
+  #toast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);
+    background:rgba(36,59,83,.94);color:#fff;padding:12px 18px;border-radius:16px;
+    font-weight:800;font-size:14px;text-align:center;opacity:0;transition:.25s;
+    max-width:80%;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  #toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+  /* joystick */
+  #joystick{position:absolute;left:16px;bottom:calc(20px + env(safe-area-inset-bottom));
+    width:132px;height:132px;border-radius:50%;background:rgba(255,255,255,.28);
+    border:3px solid rgba(255,255,255,.65);backdrop-filter:blur(3px);
+    box-shadow:0 6px 18px rgba(0,0,0,.18);touch-action:none}
+  #stick{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;
+    border-radius:50%;background:linear-gradient(#ffffff,#dbe9f7);
+    box-shadow:0 4px 10px rgba(0,0,0,.3);transition:transform .05s}
+
+  /* action button */
+  #actionBtn{position:absolute;right:16px;bottom:calc(34px + env(safe-area-inset-bottom));
+    min-width:96px;height:96px;border-radius:50%;background:linear-gradient(#ffd95c,#f5b400);
+    box-shadow:0 6px 0 #c08c00,0 10px 22px rgba(0,0,0,.28);color:#5a3d00;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:800;font-size:12px;padding:8px;line-height:1.1;border:4px solid #fff}
+  #actionBtn:active{transform:translateY(4px);box-shadow:0 2px 0 #c08c00}
+
+  #sideBtns{position:absolute;right:16px;bottom:calc(146px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  #sideBtns button{border:none;border-radius:16px;font-family:inherit;font-weight:800;
+    box-shadow:0 5px 0 rgba(0,0,0,.22);cursor:pointer}
+  #btnEndDay{background:linear-gradient(#ff9ccf,#f45fa8);color:#fff;padding:10px 14px;
+    font-size:12px;line-height:1.15}
+  #btnEndDay:active{transform:translateY(3px)}
+  #btnTutorial{width:44px;height:44px;border-radius:50%!important;font-size:20px;
+    background:linear-gradient(#5cb8ff,#3d8ef0);color:#fff}
+
+  /* ================= MODAL ================= */
+  #modal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;
+    padding:16px;background:rgba(20,35,55,.55);backdrop-filter:blur(4px);overflow-y:auto}
+  #modal .modalCard{background:#fff;border-radius:26px;padding:20px;width:100%;max-width:430px;
+    box-shadow:0 14px 44px rgba(0,0,0,.4);border:5px solid #fff;
+    animation:pop .25s cubic-bezier(.2,1.4,.5,1)}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  .modalCard h2{font-size:20px;margin-bottom:8px;text-align:center;color:#243b53}
+  .modalCard p{font-size:14px;line-height:1.5;color:#425466;margin-bottom:12px;font-weight:600}
+  .matText{background:#f2f8ff;border-left:5px solid #3d8ef0;border-radius:12px;
+    padding:12px;font-size:13.5px!important}
+  .reward{text-align:center;font-weight:800;color:#2b8c3e;background:#e8fbe9;
+    border-radius:14px;padding:10px;margin-bottom:14px;font-size:14px}
+
+  .quizHead{text-align:center;font-size:12px;font-weight:800;color:#3d8ef0;margin-bottom:6px;
+    letter-spacing:1px;text-transform:uppercase}
+  .quizQ{font-size:16px;font-weight:800;text-align:center;margin-bottom:14px;line-height:1.35}
+  .quizOpts{display:flex;flex-direction:column;gap:8px}
+  .quizOpts .btn{background:linear-gradient(#f2f8ff,#e3efff);color:#243b53;
+    box-shadow:0 4px 0 #c9ddf5;text-align:left;font-size:14px;padding:12px 14px}
+  .quizOpts .btn.correct{background:linear-gradient(#7ee787,#3fbf55);color:#fff;box-shadow:0 4px 0 #2b8c3e}
+  .quizOpts .btn.wrong{background:linear-gradient(#ff9c9c,#ef4444);color:#fff;box-shadow:0 4px 0 #b91c1c}
+
+  .reportRow{display:flex;justify-content:space-between;padding:8px 10px;border-radius:11px;
+    background:#f5f9ff;margin-bottom:6px;font-size:13px;font-weight:700}
+  .reportRow b{color:#2b6fc4}
+  .bigScore{text-align:center;font-size:38px;font-weight:800;
+    background:linear-gradient(90deg,#f5b400,#f45fa8);-webkit-background-clip:text;
+    background-clip:text;color:transparent;line-height:1.1;margin:6px 0}
+  .stars{text-align:center;font-size:26px;margin-bottom:8px;letter-spacing:2px}
+  .tutStep{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+  .tutStep .num{flex:0 0 26px;height:26px;border-radius:50%;background:#3d8ef0;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+  .tutStep p{margin:0!important;font-size:13px!important}
+  .row2{display:flex;gap:8px;margin-top:12px}
+</style>
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+
+<!-- ================= HUD ================= -->
+<div id="hud" class="hidden">
+  <div id="topbar">
+    <div class="pill"><span id="dayTxt">Hari 1/30</span></div>
+    <div class="pill money"><span id="moneyTxt">Rp 0</span></div>
+    <div class="pill score"><span id="scoreTxt">⭐ 0</span></div>
+  </div>
+
+  <div id="statbar">
+    <div id="hearts"></div>
+    <div id="satWrap"><div id="satFill"></div><span id="satTxt">Satisfy 0%</span></div>
+  </div>
+
+  <div id="taskPanel">
+    <div class="task" id="taskWajib">⭕ Makan &amp; Minum</div>
+    <div class="task" id="taskOpsional">⭕ Misi Opsional</div>
+  </div>
+
+  <div id="compass">
+    <div id="compassArrow">▲</div>
+    <div id="compassTxt">Harta</div>
+  </div>
+
+  <div id="toast"></div>
+
+  <div id="sideBtns">
+    <button id="btnTutorial">?</button>
+    <button id="btnEndDay">Akhiri<br>Hari</button>
+  </div>
+
+  <div id="actionBtn" class="hidden">Aksi</div>
+  <div id="joystick"><div id="stick"></div></div>
+</div>
+
+<!-- ================= MENU ================= -->
+<div id="menu" class="screen">
+  <div class="card">
+    <div class="title">Financial Management<br>for KIDS</div>
+    <div class="subtitle">🏝️ Open World Treasure Edition</div>
+
+    <div class="sect">1. PILIH TINGKAT KESULITAN</div>
+    <div class="diffRow" id="diffRow">
+      <div class="diffOpt sel" data-diff="mudah">
+        <div><b>MUDAH</b><small>Nyawa 7/10 • Satisfy 30%/minggu</small></div>
+        <div class="badge">Santai</div>
+      </div>
+      <div class="diffOpt" data-diff="sedang">
+        <div><b>SEDANG</b><small>Nyawa 5/7 • Satisfy 50%/minggu</small></div>
+        <div class="badge">Seimbang</div>
+      </div>
+      <div class="diffOpt" data-diff="susah">
+        <div><b>SUSAH</b><small>Nyawa 3/5 • Satisfy 75%/minggu</small></div>
+        <div class="badge">Tantangan</div>
+      </div>
+    </div>
+
+    <div class="sect">2. MODE PENDAPATAN</div>
+    <div class="incRow" id="incRow">
+      <div class="incOpt sel" data-inc="harian">Harian<small id="incH">Rp 20.000</small></div>
+      <div class="incOpt" data-inc="mingguan">Mingguan<small id="incM">Rp 150.000</small></div>
+      <div class="incOpt" data-inc="bulanan">Bulanan<small id="incB">Rp 600.000</small></div>
+    </div>
+
+    <div class="row2">
+      <button class="btn green" id="btnStart">▶ Mulai</button>
+    </div>
+    <div class="row2">
+      <button class="btn grey small" id="btnLoad" style="flex:1">💾 Lanjutkan</button>
+      <button class="btn pink small" id="btnHow" style="flex:1">📖 Cara Bermain</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div id="modal" class="hidden"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =========================================================================
+   FINANCIAL MANAGEMENT FOR KIDS — OPEN WORLD TREASURE
+   HTML + CSS + JS (Three.js / WebGL) + JSON LocalStorage
+   ========================================================================= */
+
+/* ------------------------------------------------------------------ *
+ *  0. KONFIGURASI & STATE
+ * ------------------------------------------------------------------ */
+const SAVE_KEY = 'fmkids_save_v1';
+const TOTAL_DAYS = 30;
+
+const DIFF = {
+  mudah:  { label:'MUDAH',  incomes:{harian:20000, mingguan:150000, bulanan:600000},
+            health:7, maxHealth:10, satisfyTarget:30 },
+  sedang: { label:'SEDANG', incomes:{harian:15000, mingguan:125000, bulanan:450000},
+            health:5, maxHealth:7,  satisfyTarget:50 },
+  susah:  { label:'SUSAH',  incomes:{harian:10000, mingguan:80000,  bulanan:300000},
+            health:3, maxHealth:5,  satisfyTarget:75 }
+};
+
+const OPTIONAL = {
+  ngopi:    { name:'Ngopi',            price:2000,  sat:10, icon:'☕' },
+  nyemil:   { name:'Nyemil',           price:1000,  sat:5,  icon:'🍿' },
+  resto:    { name:'Resto',            price:5000,  sat:15, icon:'🍽️' },
+  timezone: { name:'Timezone',         price:10000, sat:20, icon:'🕹️' },
+  liburan:  { name:'Paket Liburan',    price:50000, sat:50, icon:'✈️' }
+};
+
+const SPECIALS = {
+  tv:       { name:'Smart TV',                  price:100000, desc:'Satisfy permanen +10%' },
+  purifier: { name:'Water Purifier',            price:100000, desc:'Diskon 50% harga misi wajib' },
+  food:     { name:'Automated Food Processor',  price:100000, desc:'Nyawa +1 setiap 3 hari' }
+};
+
+const BASE_WAJIB_PRICE = 10000;
+
+/* Bahan materi harta karun (dibacakan oleh pengisi suara) */
+const TREASURE_MATERIALS = [
+  { title:'Koin Emas Langka', rare:'🪙',
+    text:'Selamat! Kamu menemukan Koin Emas Langka. Menabung adalah kebiasaan hebat. Sisihkan minimal dua puluh persen dari uang sakumu setiap hari. Sedikit demi sedikit, lama-lama menjadi bukit.' },
+  { title:'Permata Kebutuhan', rare:'💎',
+    text:'Permata Kebutuhan! Ingat, kebutuhan adalah sesuatu yang harus dipenuhi, seperti makan dan minum. Keinginan adalah sesuatu yang ingin dimiliki tetapi tidak wajib. Dahulukan kebutuhan sebelum keinginan.' },
+  { title:'Buku Catatan Ajaib', rare:'📒',
+    text:'Buku Catatan Ajaib! Mencatat pengeluaran membantumu tahu ke mana uangmu pergi. Catat setiap pembelian, sekecil apa pun. Dengan begitu kamu bisa mengatur uang dengan lebih baik.' },
+  { title:'Perisai Dana Darurat', rare:'🛡️',
+    text:'Perisai Dana Darurat! Dana darurat adalah uang cadangan untuk kejadian tak terduga, misalnya sakit atau kebutuhan mendadak. Simpanlah sebagian uangmu untuk dana darurat.' },
+  { title:'Bibit Investasi', rare:'🌱',
+    text:'Bibit Investasi! Investasi adalah cara membuat uangmu bertumbuh. Contohnya menabung di bank atau membeli buku pengetahuan. Ingat, investasi butuh kesabaran dan jangan mudah tergoda.' },
+  { title:'Hati Emas Berbagi', rare:'💗',
+    text:'Hati Emas Berbagi! Berbagi kepada yang membutuhkan membuat uangmu lebih bermakna. Sisihkan sebagian kecil uangmu untuk berdonasi. Kebahagiaan bukan hanya dari memiliki, tetapi juga dari berbagi.' }
+];
+
+/* Bank soal kuis */
+const QUIZ_BANK = [
+  { q:'Apa yang dimaksud dengan menabung?',
+    o:['Menyimpan uang untuk kebutuhan masa depan','Menghabiskan uang untuk jajan','Meminjam uang teman','Membuang uang'], a:0 },
+  { q:'Mana yang termasuk kebutuhan pokok?',
+    o:['Mainan','Makanan dan minuman','Konser musik','Sepatu mahal'], a:1 },
+  { q:'Uangmu Rp20.000 dan kamu membeli makanan Rp10.000. Berapa sisanya?',
+    o:['Rp5.000','Rp10.000','Rp15.000','Rp20.000'], a:1 },
+  { q:'Apa arti "hemat"?',
+    o:['Membeli semua yang diinginkan','Menggunakan uang dengan bijak','Meminjam uang terus','Tidak pernah membeli apa pun'], a:1 },
+  { q:'Apa itu kebutuhan?',
+    o:['Sesuatu yang harus dipenuhi untuk hidup','Sesuatu yang hanya ingin dimiliki','Barang mahal','Hadiah'], a:0 },
+  { q:'Apa itu keinginan?',
+    o:['Sesuatu yang wajib','Sesuatu yang ingin dimiliki tapi tidak wajib','Uang saku','Tabungan'], a:1 },
+  { q:'Berapa persen yang baik untuk ditabung dari uang saku?',
+    o:['0%','Minimal 20%','100%','Tidak perlu menabung'], a:1 },
+  { q:'Apa manfaat memiliki tabungan?',
+    o:['Bisa membeli kebutuhan mendadak','Uang cepat habis','Tidak ada manfaat','Bisa dipakai jajan terus'], a:0 },
+  { q:'Mainan Rp50.000, uangmu Rp15.000/minggu. Berapa minggu minimal menabung?',
+    o:['2 minggu','4 minggu','6 minggu','10 minggu'], a:1 },
+  { q:'Apa itu "dana darurat"?',
+    o:['Uang untuk bersenang-senang','Uang cadangan untuk kejadian tak terduga','Uang untuk membeli mainan','Uang pinjaman'], a:1 },
+  { q:'Mana contoh pengeluaran yang tidak perlu?',
+    o:['Membeli makan siang','Membeli air minum','Membeli mainan ke-10 yang tidak dipakai','Membayar SPP'], a:2 },
+  { q:'Apa yang harus dilakukan sebelum membeli barang?',
+    o:['Beli dulu, pikirkan nanti','Pikirkan apakah itu kebutuhan atau keinginan','Pinjam uang teman','Beli yang paling mahal'], a:1 },
+  { q:'Berapa harga paket makan + minum di game ini?',
+    o:['Rp5.000','Rp10.000','Rp15.000','Rp20.000'], a:1 },
+  { q:'Apa itu "catatan pengeluaran"?',
+    o:['Daftar barang yang dibeli dan harganya','Daftar teman','Daftar mainan','Daftar nilai'], a:0 },
+  { q:'Jika pengeluaran lebih besar dari pemasukan, apa yang terjadi?',
+    o:['Uang bertambah','Uang habis / defisit','Tidak terjadi apa-apa','Menjadi kaya'], a:1 },
+  { q:'Apa itu "pemasukan"?',
+    o:['Uang yang keluar','Uang yang masuk / diterima','Utang','Diskon'], a:1 }
+];
+
+/* ------------------------------------------------------------------ *
+ *  1. STATE GAME + PENYIMPANAN JSON
+ * ------------------------------------------------------------------ */
+let S = null;                 // state permainan
+let paused = false;           // pause saat modal terbuka
+let activeTarget = null;      // interaksi terdekat
+
+function newState(difficulty, incomeMode){
+  const d = DIFF[difficulty];
+  return {
+    version: 1,
+    difficulty, incomeMode,
+    day: 1,
+    money: 0,
+    health: d.health,
+    satisfy: 0,
+    score: 0,
+    dailyDone: false,
+    optionalToday: 0,
+    owned: [],           // special items
+    treasures: [],       // id peti yang sudah dibuka
+    stats: { wajib:0, skipped:0, optional:0, treasures:0, quizCorrect:0, quizTotal:0 },
+    createdAt: Date.now()
+  };
+}
+
+function saveGame(){
+  if (!S) return;
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e){ console.warn('save gagal', e); }
+}
+function loadGame(){
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (!obj || !obj.difficulty) return null;
+    return obj;
+  } catch(e){ return null; }
+}
+function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+
+/* ------------------------------------------------------------------ *
+ *  2. SUARA (TEXT TO SPEECH)
+ * ------------------------------------------------------------------ */
+let voiceList = [];
+function refreshVoices(){
+  if (!('speechSynthesis' in window)) return;
+  voiceList = speechSynthesis.getVoices() || [];
+}
+if ('speechSynthesis' in window){
+  refreshVoices();
+  speechSynthesis.onvoiceschanged = refreshVoices;
+}
+function speak(text){
+  if (!('speechSynthesis' in window)) return;
+  try { speechSynthesis.cancel(); } catch(e){}
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'id-ID';
+  u.rate = 0.94;
+  u.pitch = 1.12;
+  u.volume = 1;
+  const idv = voiceList.find(v => v.lang && v.lang.toLowerCase().indexOf('id') === 0);
+  if (idv) u.voice = idv;
+  try { speechSynthesis.speak(u); } catch(e){}
+}
+
+/* ------------------------------------------------------------------ *
+ *  3. THREE.JS — DUNIA OPEN WORLD PIXAR STYLE
+ * ------------------------------------------------------------------ */
+let scene, camera, renderer, player, playerBody;
+let interactables = [];
+let chestObjects = [];
+let clockLast = performance.now();
+let bobT = 0;
+const WORLD_LIMIT = 78;
+
+/* PRNG deterministik supaya posisi dunia selalu sama */
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+let rnd = mulberry32(20240501);
+
+const PALETTE = {
+  grass: 0x8ed36a, grass2: 0x7ec95c,
+  trunk: 0x8b5a2b, leaf1: 0x4fb14f, leaf2: 0x66c96b, leaf3: 0x3f9c46,
+  wood: 0xb5793c, gold: 0xffc63f, roofRed: 0xe4572e, roofBlue: 0x3d8ef0,
+  roofPink: 0xf45fa8, roofYellow: 0xf5b400, wall1: 0xfff3e0, wall2: 0xe8f4ff
+};
+
+function makeLabel(text, bg, fg){
+  const c = document.createElement('canvas');
+  c.width = 320; c.height = 80;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = bg || '#ffffff';
+  const r = 24, w = 312, h = 68, x = 4, y = 6;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = fg || '#243b53';
+  ctx.font = 'bold 34px "Trebuchet MS", sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, 160, 41);
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = 4;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+  sp.scale.set(7.2, 1.8, 1);
+  return sp;
+}
+
+function initThree(){
+  const canvas = document.getElementById('scene');
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference:'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  if ('outputEncoding' in renderer) renderer.outputEncoding = THREE.sRGBEncoding;
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x9fd8ff);
+  scene.fog = new THREE.Fog(0x9fd8ff, 70, 145);
+
+  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 400);
+  camera.position.set(0, 14, 18);
+  camera.lookAt(0, 1.5, 0);
+
+  /* --- Lampu (soft, Pixar-ish) --- */
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x9bd47a, 0.95);
+  scene.add(hemi);
+
+  const sun = new THREE.DirectionalLight(0xfff3d1, 1.05);
+  sun.position.set(34, 52, 22);
+  sun.castShadow = true;
+  sun.shadow.mapSize.width = 1024;
+  sun.shadow.mapSize.height = 1024;
+  const d = 70;
+  sun.shadow.camera.left = -d; sun.shadow.camera.right = d;
+  sun.shadow.camera.top = d;  sun.shadow.camera.bottom = -d;
+  sun.shadow.camera.near = 1; sun.shadow.camera.far = 160;
+  sun.shadow.bias = -0.0008;
+  scene.add(sun);
+
+  const fill = new THREE.DirectionalLight(0xbfe0ff, 0.35);
+  fill.position.set(-30, 20, -25);
+  scene.add(fill);
+
+  buildWorld();
+  buildPlayer();
+  animate(performance.now());
+}
+
+/* --------------------------- DUNIA --------------------------- */
+function buildWorld(){
+  /* Tanah */
+  const groundMat = new THREE.MeshStandardMaterial({ color: PALETTE.grass, roughness: 1 });
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(220, 220), groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  /* Pulau bundar / tepi */
+  const edgeMat = new THREE.MeshStandardMaterial({ color: PALETTE.grass2, roughness: 1 });
+  for (let i = 0; i < 26; i++){
+    const a = (i / 26) * Math.PI * 2;
+    const rad = 90 + rnd() * 12;
+    const hill = new THREE.Mesh(new THREE.SphereGeometry(9 + rnd() * 9, 12, 8), edgeMat);
+    hill.position.set(Math.cos(a) * rad, -2 - rnd() * 4, Math.sin(a) * rad);
+    hill.scale.y = 0.55;
+    hill.receiveShadow = true;
+    scene.add(hill);
+  }
+
+  /* Jalan setapak (lingkaran) */
+  const pathMat = new THREE.MeshStandardMaterial({ color: 0xd9c9a3, roughness: 1 });
+  const path = new THREE.Mesh(new THREE.RingGeometry(15, 19, 48), pathMat);
+  path.rotation.x = -Math.PI / 2;
+  path.position.y = 0.02;
+  path.receiveShadow = true;
+  scene.add(path);
+
+  /* --- Bangunan / titik interaksi --- */
+  const spots = [
+    { key:'warung',   x:0,    z:-14, color:0xffe0b2, roof:PALETTE.roofRed,    label:'WARUNG MAKAN',  type:'building' },
+    { key:'ngopi',    x:-20,  z:-6,  color:0xf5e0c8, roof:0x8b5a2b,            label:'KEDAI KOPI',    type:'building' },
+    { key:'nyemil',   x:16,   z:-16, color:0xffd9e8, roof:PALETTE.roofPink,    label:'TOKO SNACK',    type:'building' },
+    { key:'resto',    x:22,   z:6,   color:0xdff0ff, roof:PALETTE.roofBlue,    label:'RESTO',         type:'building' },
+    { key:'timezone', x:8,    z:22,  color:0xe8e0ff, roof:0x8b5cf6,            label:'TIMEZONE',      type:'building' },
+    { key:'liburan',  x:-24,  z:20,  color:0xe0ffe8, roof:PALETTE.roofYellow,  label:'TRAVEL AGENT',  type:'building' },
+    { key:'special',  x:0,    z:32,  color:0xfff0b8, roof:PALETTE.gold,        label:'SPECIAL SHOP',  type:'building' }
+  ];
+
+  spots.forEach(sp => {
+    const b = makeBuilding(sp.x, sp.z, sp.color, sp.roof);
+    const lbl = makeLabel(sp.label, '#ffffff', '#243b53');
+    lbl.position.set(sp.x, 8.6, sp.z);
+    scene.add(lbl);
+
+    interactables.push({
+      x: sp.x, z: sp.z, radius: 6.5,
+      label: sp.label, key: sp.key, mesh: b, hidden: false
+    });
+  });
+
+  /* --- Pepohonan & batu hias --- */
+  const treePositions = [];
+  for (let i = 0; i < 46; i++){
+    const a = rnd() * Math.PI * 2;
+    const r = 28 + rnd() * 45;
+    const x = Math.cos(a) * r, z = Math.sin(a) * r;
+    if (Math.hypot(x, z) < 24) continue;
+    let tooClose = false;
+    for (const sp of spots) if (Math.hypot(x - sp.x, z - sp.z) < 9) tooClose = true;
+    if (tooClose) continue;
+    treePositions.push([x, z]);
+    makeTree(x, z, 0.8 + rnd() * 0.7);
+  }
+
+  /* --- Bunga-bunga kecil --- */
+  const flowerColors = [0xff8fb1, 0xffd23f, 0xffffff, 0xb28dff];
+  for (let i = 0; i < 90; i++){
+    const a = rnd() * Math.PI * 2, r = 20 + rnd() * 55;
+    const f = new THREE.Mesh(
+      new THREE.SphereGeometry(0.28, 8, 6),
+      new THREE.MeshStandardMaterial({ color: flowerColors[i % flowerColors.length], roughness: .8 })
+    );
+    f.position.set(Math.cos(a) * r, 0.22, Math.sin(a) * r);
+    f.castShadow = true;
+    scene.add(f);
+  }
+
+  /* --- PETI HARTA KARUN --- */
+  const chestSpots = [
+    [ -34, -34 ], [ 38, -30 ], [ -40, 12 ], [ 34, 34 ], [ -12, 46 ], [ 44, -6 ]
+  ];
+  chestSpots.forEach((p, i) => makeChest(i, p[0], p[1]));
+}
+
+function makeTree(x, z, s){
+  const g = new THREE.Group();
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.35, 0.5, 3, 8),
+    new THREE.MeshStandardMaterial({ color: PALETTE.trunk, roughness: .95 })
+  );
+  trunk.position.y = 1.5; trunk.castShadow = true; trunk.receiveShadow = true;
+  g.add(trunk);
+
+  const leafColors = [PALETTE.leaf1, PALETTE.leaf2, PALETTE.leaf3];
+  for (let i = 0; i < 3; i++){
+    const ball = new THREE.Mesh(
+      new THREE.SphereGeometry(1.5 - i * 0.28, 12, 10),
+      new THREE.MeshStandardMaterial({ color: leafColors[i % 3], roughness: .9 })
+    );
+    ball.position.set((rnd() - .5) * 0.7, 3.1 + i * 0.95, (rnd() - .5) * 0.7);
+    ball.castShadow = true;
+    g.add(ball);
+  }
+  g.position.set(x, 0, z);
+  g.scale.setScalar(s);
+  scene.add(g);
+}
+
+function makeBuilding(x, z, wallColor, roofColor){
+  const g = new THREE.Group();
+
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(6, 4, 5),
+    new THREE.MeshStandardMaterial({ color: wallColor, roughness: .85 })
+  );
+  body.position.y = 2; body.castShadow = true; body.receiveShadow = true;
+  g.add(body);
+
+  const roof = new THREE.Mesh(
+    new THREE.ConeGeometry(5.2, 2.8, 4),
+    new THREE.MeshStandardMaterial({ color: roofColor, roughness: .7 })
+  );
+  roof.position.y = 5.4; roof.rotation.y = Math.PI / 4;
+  roof.castShadow = true;
+  g.add(roof);
+
+  /* pintu */
+  const door = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, 2.4, 0.3),
+    new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: .8 })
+  );
+  door.position.set(0, 1.2, 2.55);
+  g.add(door);
+
+  /* jendela */
+  const winMat = new THREE.MeshStandardMaterial({
+    color: 0x9fdcff, roughness: .25, metalness: .25,
+    emissive: 0x2a5f8f, emissiveIntensity: .25
+  });
+  [[-2, 2.6, 2.55], [2, 2.6, 2.55]].forEach(p => {
+    const w = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.1, 0.2), winMat);
+    w.position.set(p[0], p[1], p[2]);
+    g.add(w);
+  });
+
+  g.position.set(x, 0, z);
+  scene.add(g);
+  return g;
+}
+
+function makeChest(id, x, z){
+  const group = new THREE.Group();
+
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: .8 });
+  const goldMat = new THREE.MeshStandardMaterial({
+    color: PALETTE.gold, metalness: .9, roughness: .25,
+    emissive: 0x6b4a00, emissiveIntensity: .5
+  });
+
+  const base = new THREE.Mesh(new THREE.BoxGeometry(2, 1.2, 1.5), woodMat);
+  base.position.y = 0.6; base.castShadow = true; base.receiveShadow = true;
+  group.add(base);
+
+  /* pita emas */
+  const band = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.22, 1.6), goldMat);
+  band.position.y = 0.85;
+  group.add(band);
+
+  /* tutup */
+  const lidPivot = new THREE.Group();
+  lidPivot.position.set(0, 1.2, -0.75);
+  const lid = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 1.5), woodMat);
+  lid.position.set(0, 0.25, 0.75);
+  lid.castShadow = true;
+  lidPivot.add(lid);
+  const lidBand = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.16, 0.3), goldMat);
+  lidBand.position.set(0, 0.3, 0.75);
+  lidPivot.add(lidBand);
+  group.add(lidPivot);
+
+  /* kunci emas */
+  const lock = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 8), goldMat);
+  lock.position.set(0, 1.05, 0.8);
+  group.add(lock);
+
+  /* koin melayang (petunjuk) */
+  const coins = [];
+  for (let i = 0; i < 4; i++){
+    const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.07, 12), goldMat);
+    coin.rotation.x = Math.PI / 2;
+    group.add(coin);
+    coins.push(coin);
+  }
+
+  /* cincin cahaya */
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(1.9, 2.5, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffe680, transparent: true, opacity: 0.45,
+      side: THREE.DoubleSide, depthWrite: false })
+  );
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.05;
+  group.add(ring);
+
+  /* titik cahaya */
+  const light = new THREE.PointLight(0xffcc55, 1.4, 14, 2);
+  light.position.set(0, 2.2, 0);
+  group.add(light);
+
+  group.position.set(x, 0, z);
+  scene.add(group);
+
+  const obj = {
+    id, x, z, group, lidPivot, coins, ring, light,
+    opened: false, anim: 0, baseY: 0
+  };
+  chestObjects.push(obj);
+
+  interactables.push({
+    x, z, radius: 4.2, label: 'Buka Peti Harta 💎',
+    key: 'chest_' + id, chest: obj, hidden: false,
+    isChest: true
+  });
+}
+
+/* --------------------------- PEMAIN --------------------------- */
+function buildPlayer(){
+  player = new THREE.Group();
+  playerBody = new THREE.Group();
+
+  const skin = new THREE.MeshStandardMaterial({ color: 0xffd9b3, roughness: .75 });
+  const shirt = new THREE.MeshStandardMaterial({ color: 0x4a90e2, roughness: .7 });
+  const pants = new THREE.MeshStandardMaterial({ color: 0x2f5d8a, roughness: .8 });
+
+  /* badan */
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.58, 20, 16), shirt);
+  body.scale.set(1, 1.15, 0.9);
+  body.position.y = 0.72;
+  body.castShadow = true;
+  playerBody.add(body);
+
+  /* kaki */
+  [-0.24, 0.24].forEach(x => {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.45, 8), pants);
+    leg.position.set(x, 0.24, 0);
+    leg.castShadow = true;
+    playerBody.add(leg);
+  });
+
+  /* kepala besar (Pixar style) */
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.52, 24, 18), skin);
+  head.position.y = 1.72;
+  head.castShadow = true;
+  playerBody.add(head);
+
+  /* mata */
+  const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .4 });
+  const pupilMat = new THREE.MeshStandardMaterial({ color: 0x1c2b3a, roughness: .3 });
+  [-0.2, 0.2].forEach(x => {
+    const w = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12), eyeWhiteMat);
+    w.position.set(x, 1.8, 0.42);
+    playerBody.add(w);
+    const p = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 10), pupilMat);
+    p.position.set(x, 1.8, 0.52);
+    playerBody.add(p);
+  });
+
+  /* rambut */
+  const hair = new THREE.Mesh(
+    new THREE.SphereGeometry(0.53, 20, 14, 0, Math.PI * 2, 0, Math.PI * 0.55),
+    new THREE.MeshStandardMaterial({ color: 0x3a2418, roughness: .9 })
+  );
+  hair.position.y = 1.76;
+  hair.rotation.x = -0.18;
+  playerBody.add(hair);
+
+  /* topi */
+  const cap = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.42, 0.46, 0.18, 16),
+    new THREE.MeshStandardMaterial({ color: 0xf5b400, roughness: .7 })
+  );
+  cap.position.y = 2.22;
+  playerBody.add(cap);
+
+  /* tangan */
+  [-0.62, 0.62].forEach(x => {
+    const arm = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 10), shirt);
+    arm.scale.set(1, 1.6, 1);
+    arm.position.set(x, 0.85, 0);
+    arm.castShadow = true;
+    playerBody.add(arm);
+  });
+
+  player.add(playerBody);
+  player.position.set(0, 0, 0);
+  scene.add(player);
+
+  /* lingkaran penanda */
+  const marker = new THREE.Mesh(
+    new THREE.RingGeometry(0.75, 0.95, 28),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .55,
+      side: THREE.DoubleSide, depthWrite: false })
+  );
+  marker.rotation.x = -Math.PI / 2;
+  marker.position.y = 0.03;
+  player.add(marker);
+}
+
+/* ------------------------------------------------------------------ *
+ *  4. KONTROL
+ * ------------------------------------------------------------------ */
+const keys = {};
+window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+window.addEventListener('keyup',   e => { keys[e.key.toLowerCase()] = false; });
+
+const joy = { x: 0, y: 0, active: false, id: null, cx: 0, cy: 0, r: 56 };
+
+function setupJoystick(){
+  const el = document.getElementById('joystick');
+  const stick = document.getElementById('stick');
+
+  function setStick(dx, dy){
+    stick.style.transform = `translate(${dx}px, ${dy}px)`;
+  }
+  function reset(){
+    joy.x = 0; joy.y = 0; joy.active = false; joy.id = null;
+    setStick(0, 0);
+  }
+
+  el.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const rect = el.getBoundingClientRect();
+    joy.cx = rect.left + rect.width / 2;
+    joy.cy = rect.top + rect.height / 2;
+    joy.r = rect.width / 2 - 14;
+    joy.active = true; joy.id = e.pointerId;
+    try { el.setPointerCapture(e.pointerId); } catch(err){}
+    move(e.clientX, e.clientY);
+  });
+  el.addEventListener('pointermove', e => {
+    if (!joy.active || e.pointerId !== joy.id) return;
+    e.preventDefault();
+    move(e.clientX, e.clientY);
+  });
+  el.addEventListener('pointerup', e => {
+    if (e.pointerId === joy.id) reset();
+  });
+  el.addEventListener('pointercancel', e => {
+    if (e.pointerId === joy.id) reset();
+  });
+
+  function move(px, py){
+    let dx = px - joy.cx;
+    let dy = py - joy.cy;
+    const len = Math.hypot(dx, dy);
+    if (len > joy.r){
+      dx = dx / len * joy.r;
+      dy = dy / len * joy.r;
+    }
+    setStick(dx, dy);
+    joy.x = dx / joy.r;
+    joy.y = dy / joy.r;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  5. LOOP ANIMASI
+ * ------------------------------------------------------------------ */
+function lerpAngle(a, b, t){
+  let d = b - a;
+  while (d > Math.PI) d -= Math.PI * 2;
+  while (d < -Math.PI) d += Math.PI * 2;
+  return a + d * t;
+}
+
+function animate(now){
+  requestAnimationFrame(animate);
+  const dt = Math.min((now - clockLast) / 1000, 0.05);
+  clockLast = now;
+
+  if (S && !paused) updatePlayer(dt);
+  updateChests(dt);
+  updateCamera(dt);
+  updateInteraction();
+  updateCompass();
+
+  if (renderer && scene && camera) renderer.render(scene, camera);
+}
+
+function updatePlayer(dt){
+  if (!player) return;
+  let mx = 0, mz = 0;
+
+  if (keys['w'] || keys['arrowup'])    mz -= 1;
+  if (keys['s'] || keys['arrowdown'])  mz += 1;
+  if (keys['a'] || keys['arrowleft'])  mx -= 1;
+  if (keys['d'] || keys['arrowright']) mx += 1;
+
+  mx += joy.x;
+  mz += joy.y;
+
+  const len = Math.hypot(mx, mz);
+  if (len > 1){ mx /= len; mz /= len; }
+  const moving = len > 0.08;
+
+  const speed = 11;
+  player.position.x += mx * speed * dt;
+  player.position.z += mz * speed * dt;
+
+  player.position.x = Math.max(-WORLD_LIMIT, Math.min(WORLD_LIMIT, player.position.x));
+  player.position.z = Math.max(-WORLD_LIMIT, Math.min(WORLD_LIMIT, player.position.z));
+
+  if (moving){
+    const targetAngle = Math.atan2(mx, mz);
+    player.rotation.y = lerpAngle(player.rotation.y, targetAngle, 0.22);
+  }
+
+  bobT += dt * (moving ? 11 : 3);
+  const bob = Math.sin(bobT) * (moving ? 0.09 : 0.03);
+  playerBody.position.y = bob;
+  playerBody.rotation.z = moving ? Math.sin(bobT * 0.5) * 0.05 : 0;
+}
+
+function updateCamera(dt){
+  if (!player) return;
+  const target = new THREE.Vector3(player.position.x, 13.5, player.position.z + 17);
+  camera.position.lerp(target, 1 - Math.pow(0.001, dt));
+  camera.lookAt(player.position.x, 1.8, player.position.z);
+}
+
+function updateChests(dt){
+  const t = performance.now() / 1000;
+  chestObjects.forEach(c => {
+    if (c.opened){
+      if (c.anim < 1){
+        c.anim = Math.min(1, c.anim + dt * 2.2);
+        c.lidPivot.rotation.x = -c.anim * 1.25;
+        c.light.intensity = 1.4 + Math.sin(c.anim * Math.PI) * 4;
+      } else {
+        c.light.intensity = Math.max(0, c.light.intensity - dt * 2);
+      }
+      c.coins.forEach((coin, i) => {
+        coin.visible = c.anim > 0.2;
+        coin.position.set(Math.cos(t * 2 + i) * 0.6, 2.2 + c.anim * 1.5 + Math.sin(t * 3 + i) * 0.3, Math.sin(t * 2 + i) * 0.6);
+      });
+      c.ring.material.opacity = 0;
+      return;
+    }
+    /* belum dibuka: animasi melayang + berputar */
+    c.group.position.y = Math.sin(t * 1.4 + c.id) * 0.09;
+    c.coins.forEach((coin, i) => {
+      const a = t * 1.6 + (i / c.coins.length) * Math.PI * 2;
+      coin.position.set(Math.cos(a) * 1.5, 1.9 + Math.sin(t * 2.4 + i) * 0.28, Math.sin(a) * 1.5);
+      coin.rotation.z += dt * 3;
+    });
+    c.ring.material.opacity = 0.32 + Math.sin(t * 2.4) * 0.16;
+    c.light.intensity = 1.1 + Math.sin(t * 2.6) * 0.5;
+  });
+}
+
+function updateInteraction(){
+  if (!player || !S || paused){
+    if (activeTarget){ activeTarget = null; actionBtnEl.classList.add('hidden'); }
+    return;
+  }
+  let best = null, bestD = Infinity;
+  for (const it of interactables){
+    if (it.hidden) continue;
+    const d = Math.hypot(it.x - player.position.x, it.z - player.position.z);
+    if (d < it.radius && d < bestD){ bestD = d; best = it; }
+  }
+  if (best !== activeTarget){
+    activeTarget = best;
+    if (best){
+      actionBtnEl.textContent = best.label;
+      actionBtnEl.classList.remove('hidden');
+    } else {
+      actionBtnEl.classList.add('hidden');
+    }
+  }
+}
+
+function updateCompass(){
+  const arrow = document.getElementById('compassArrow');
+  const txt = document.getElementById('compassTxt');
+  if (!arrow || !player) return;
+
+  let nearest = null, nd = Infinity;
+  for (const c of chestObjects){
+    if (c.opened) continue;
+    const d = Math.hypot(c.x - player.position.x, c.z - player.position.z);
+    if (d < nd){ nd = d; nearest = c; }
+  }
+  if (!nearest){
+    arrow.style.transform = 'rotate(0rad)';
+    arrow.style.opacity = 0.25;
+    txt.textContent = 'Selesai';
+    return;
+  }
+  arrow.style.opacity = 1;
+  const dx = nearest.x - player.position.x;
+  const dz = nearest.z - player.position.z;
+  const ang = Math.atan2(dx, -dz);
+  arrow.style.transform = `rotate(${ang}rad)`;
+  txt.textContent = Math.round(nd) + 'm';
+}
+
+/* ------------------------------------------------------------------ *
+ *  6. UI / HUD
+ * ------------------------------------------------------------------ */
+const actionBtnEl  = document.getElementById('actionBtn');
+const toastEl      = document.getElementById('toast');
+const modalEl      = document.getElementById('modal');
+const hudEl        = document.getElementById('hud');
+const menuEl       = document.getElementById('menu');
+
+function fmt(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+
+function toast(msg, ms){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toastEl.classList.remove('show'), ms || 1800);
+}
+
+function updateHUD(){
+  if (!S) return;
+  const d = DIFF[S.difficulty];
+
+  document.getElementById('dayTxt').textContent = `Hari ${S.day}/${TOTAL_DAYS}`;
+  document.getElementById('moneyTxt').textContent = fmt(S.money);
+  document.getElementById('scoreTxt').textContent = '⭐ ' + S.score;
+
+  /* hearts */
+  let html = '';
+  for (let i = 0; i < d.maxHealth; i++){
+    html += `<span class="heart ${i < S.health ? 'full' : ''}">❤</span>`;
+  }
+  document.getElementById('hearts').innerHTML = html;
+
+  /* satisfy */
+  const effSat = Math.min(100, S.satisfy + (S.owned.indexOf('tv') >= 0 ? 10 : 0));
+  document.getElementById('satFill').style.width = effSat + '%';
+  document.getElementById('satTxt').textContent =
+    `Satisfy ${Math.round(S.satisfy)}% / target ${d.satisfyTarget}%`;
+
+  /* tugas */
+  const tw = document.getElementById('taskWajib');
+  const to = document.getElementById('taskOpsional');
+  tw.textContent = (S.dailyDone ? '✅ ' : '⭕ ') + 'Makan & Minum';
+  tw.className = 'task' + (S.dailyDone ? ' done' : '');
+  to.textContent = (S.optionalToday > 0 ? '✅ ' : '⭕ ') + 'Misi Opsional (' + S.optionalToday + ')';
+  to.className = 'task' + (S.optionalToday > 0 ? ' done' : '');
+}
+
+/* ------------------------------------------------------------------ *
+ *  7. MODAL SYSTEM
+ * ------------------------------------------------------------------ */
+function showModal(html){
+  modalEl.innerHTML = '<div class="modalCard">' + html + '</div>';
+  modalEl.classList.remove('hidden');
+  paused = true;
+}
+function hideModal(){
+  modalEl.classList.add('hidden');
+  modalEl.innerHTML = '';
+  paused = false;
+}
+window.hideModal = hideModal;
+
+/* ------------------------------------------------------------------ *
+ *  8. AKSI INTERAKSI
+ * ------------------------------------------------------------------ */
+actionBtnEl.addEventListener('click', () => {
+  if (!activeTarget || !S || paused) return;
+  const it = activeTarget;
+
+  if (it.isChest) return openChest(it.chest);
+
+  switch (it.key){
+    case 'warung':   return buyWajib();
+    case 'ngopi':    return buyOptional('ngopi');
+    case 'nyemil':   return buyOptional('nyemil');
+    case 'resto':    return buyOptional('resto');
+    case 'timezone': return buyOptional('timezone');
+    case 'liburan':  return buyOptional('liburan');
+    case 'special':  return openSpecialShop();
+  }
+});
+
+/* --- Misi wajib --- */
+function buyWajib(){
+  if (S.dailyDone){ toast('✅ Misi wajib hari ini sudah selesai!'); return; }
+  const price = S.owned.indexOf('purifier') >= 0 ? BASE_WAJIB_PRICE / 2 : BASE_WAJIB_PRICE;
+
+  if (S.money < price){
+    toast('💸 Uang tidak cukup! Butuh ' + fmt(price));
+    return;
+  }
+  S.money -= price;
+  const d = DIFF[S.difficulty];
+  if (S.health < d.maxHealth) S.health++;
+  S.dailyDone = true;
+  S.score += 100;
+  S.stats.wajib++;
+
+  toast(`🍱 Paket makan + minum dibeli! (-${fmt(price)}) Nyawa +1`);
+  speak('Misi wajib selesai. Jangan lupa makan dan minum yang cukup ya.');
+  updateHUD(); saveGame();
+}
+
+/* --- Misi opsional --- */
+function buyOptional(key){
+  const o = OPTIONAL[key];
+  if (S.money < o.price){
+    toast('💸 Uang tidak cukup! Butuh ' + fmt(o.price));
+    return;
+  }
+  S.money -= o.price;
+  S.satisfy = Math.min(100, S.satisfy + o.sat);
+  S.optionalToday++;
+  S.stats.optional++;
+  S.score += 50;
+
+  toast(`${o.icon} ${o.name}! (-${fmt(o.price)}) Satisfy +${o.sat}%`);
+  updateHUD(); saveGame();
+}
+
+/* --- Special shop --- */
+function openSpecialShop(){
+  let html = '<h2>🏪 Special Shop</h2>';
+  html += '<p>Barang khusus yang memberi efek permanen. Beli sekali saja.</p>';
+
+  Object.keys(SPECIALS).forEach(k => {
+    const sp = SPECIALS[k];
+    const owned = S.owned.indexOf(k) >= 0;
+    html += `
+      <div class="reportRow" style="align-items:center;gap:8px">
+        <div style="flex:1">
+          <b>${sp.name}</b><br>
+          <span style="font-size:11px;color:#6b7f95">${sp.desc}</span>
+        </div>
+        <button class="btn small ${owned ? 'grey' : 'yellow'}" data-buy="${k}" ${owned ? 'disabled' : ''}>
+          ${owned ? '✔ Dimiliki' : fmt(sp.price)}
+        </button>
+      </div>`;
+  });
+
+  html += '<button class="btn grey" style="margin-top:12px" onclick="hideModal()">Tutup</button>';
+  showModal(html);
+
+  modalEl.querySelectorAll('[data-buy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-buy');
+      const sp = SPECIALS[key];
+      if (S.owned.indexOf(key) >= 0) return;
+      if (S.money < sp.price){ toast('💸 Uang tidak cukup!'); return; }
+      S.money -= sp.price;
+      S.owned.push(key);
+      S.score += 100;
+      toast('✨ ' + sp.name + ' berhasil dibeli!');
+      updateHUD(); saveGame();
+      openSpecialShop(); /* refresh */
+    });
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ *  9. HARTA KARUN
+ * ------------------------------------------------------------------ */
+function openChest(chest){
+  if (!chest || chest.opened) return;
+  chest.opened = true;
+  chest.anim = 0;
+
+  if (S.treasures.indexOf(chest.id) < 0) S.treasures.push(chest.id);
+  S.stats.treasures++;
+  S.score += 150;
+
+  /* sembunyikan dari interaksi */
+  interactables.forEach(it => { if (it.chest === chest) it.hidden = true; });
+
+  const mat = TREASURE_MATERIALS[chest.id % TREASURE_MATERIALS.length];
+
+  /* pengisi suara membacakan materi */
+  speak(mat.title + '. ' + mat.text);
+
+  showModal(`
+    <h2>${mat.rare} ${mat.title}</h2>
+    <p class="matText">${mat.text}</p>
+    <div class="reward">+150 Skor • Rare Item Ditemukan! 🎉</div>
+    <button class="btn green" onclick="hideModal()">Lanjut Menjelajah</button>
+  `);
+
+  updateHUD(); saveGame();
+}
+
+/* ------------------------------------------------------------------ *
+ * 10. ALUR HARI & KEUANGAN
+ * ------------------------------------------------------------------ */
+function addIncome(){
+  const d = DIFF[S.difficulty];
+  const amount = d.incomes[S.incomeMode];
+
+  if (S.incomeMode === 'harian'){
+    S.money += amount;
+  } else if (S.incomeMode === 'mingguan'){
+    if ((S.day - 1) % 7 === 0) S.money += amount;
+  } else { /* bulanan */
+    if (S.day === 1) S.money += amount;
+  }
+}
+
+function resetDaily(){
+  S.dailyDone = false;
+  S.optionalToday = 0;
+}
+
+function requestEndDay(){
+  if (!S || paused) return;
+
+  /* 1. Misi wajib tidak selesai → nyawa -1 */
+  if (!S.dailyDone){
+    S.health -= 1;
+    S.stats.skipped++;
+    toast('⚠️ Kamu melewatkan misi wajib! Nyawa -1');
+    speak('Kamu melewatkan misi wajib. Nyawa berkurang satu.');
+  }
+
+  /* 2. Cek target satisfy mingguan */
+  if (S.day % 7 === 0){
+    const d = DIFF[S.difficulty];
+    const effSat = Math.min(100, S.satisfy + (S.owned.indexOf('tv') >= 0 ? 10 : 0));
+    if (effSat < d.satisfyTarget){
+      S.health -= 1;
+      S.score = Math.max(0, S.score - 50);
+      toast(`😟 Satisfy mingguan kurang dari ${d.satisfyTarget}%! Nyawa -1, skor -50`);
+      speak('Satisfy mingguan kamu kurang dari target. Ayo lebih seimbang minggu depan.');
+    } else {
+      S.score += 150;
+      toast('🎉 Target satisfy mingguan tercapai! Skor +150');
+      speak('Hebat! Target kepuasan mingguan kamu tercapai.');
+    }
+    S.satisfy = 0;
+  }
+
+  updateHUD();
+
+  /* 3. Game over karena nyawa habis */
+  if (S.health <= 0){
+    setTimeout(() => endGame(false), 400);
+    return;
+  }
+
+  /* 4. Kuis setiap kelipatan 5 hari */
+  const needQuiz = (S.day % 5 === 0);
+
+  const afterResolve = () => {
+    if (S.day >= TOTAL_DAYS){ endGame(true); return; }
+
+    S.day++;
+    resetDaily();
+    addIncome();
+
+    /* efek Automated Food Processor */
+    if (S.owned.indexOf('food') >= 0 && S.day % 3 === 0){
+      const d = DIFF[S.difficulty];
+      if (S.health < d.maxHealth) S.health++;
+      toast('🤖 Automated Food Processor: Nyawa +1!');
+    }
+
+    updateHUD(); saveGame();
+    toast('🌅 Hari ' + S.day + ' dimulai!');
+    speak('Hari ke ' + S.day + ' dimulai. Semangat mengatur keuangan!');
+  };
+
+  if (needQuiz){
+    setTimeout(() => openQuiz(afterResolve), 500);
+  } else {
+    setTimeout(afterResolve, 400);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 11. KUIS
+ * ------------------------------------------------------------------ */
+let quizState = null;
+
+function shuffle(arr){
+  for (let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+
+function openQuiz(onDone){
+  quizState = {
+    qs: shuffle(QUIZ_BANK.slice()).slice(0, 5),
+    i: 0, correct: 0, onDone
+  };
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const q = quizState.qs[quizState.i];
+  const html = `
+    <div class="quizHead">🧠 Kuis Level ${quizState.i + 1} / 5</div>
+    <div class="quizQ">${q.q}</div>
+    <div class="quizOpts" id="quizOpts">
+      ${q.o.map((t, i) => `<button class="btn" data-i="${i}">${String.fromCharCode(65 + i)}. ${t}</button>`).join('')}
+    </div>
+    <p style="text-align:center;font-size:11px;color:#8fa3b8;margin-top:12px;margin-bottom:0">
+      Jawab benar = +100 skor
+    </p>`;
+  showModal(html);
+
+  modalEl.querySelectorAll('#quizOpts .btn').forEach(btn => {
+    btn.addEventListener('click', () => answerQuiz(parseInt(btn.getAttribute('data-i'), 10)));
+  });
+}
+
+function answerQuiz(pick){
+  const q = quizState.qs[quizState.i];
+  const isCorrect = pick === q.a;
+
+  if (isCorrect){
+    quizState.correct++;
+    S.stats.quizCorrect++;
+    S.score += 100;
+  }
+  S.stats.quizTotal++;
+  updateHUD();
+
+  const btns = modalEl.querySelectorAll('#quizOpts .btn');
+  btns.forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === q.a) b.classList.add('correct');
+    if (idx === pick && !isCorrect) b.classList.add('wrong');
+  });
+
+  setTimeout(() => {
+    quizState.i++;
+    if (quizState.i >= quizState.qs.length) finishQuiz();
+    else renderQuiz();
+  }, 850);
+}
+
+function finishQuiz(){
+  const benar = quizState.correct;
+  const total = quizState.qs.length;
+  const bonus = benar === total ? 100 : 0;
+  if (bonus) S.score += bonus;
+
+  const cb = quizState.onDone;
+  const stars = '⭐'.repeat(Math.max(1, Math.round(benar / total * 3)));
+
+  showModal(`
+    <h2>🧠 Hasil Kuis</h2>
+    <div class="bigScore">${benar} / ${total}</div>
+    <div class="stars">${stars}</div>
+    <p style="text-align:center">${benar === total
+      ? 'Sempurna! Kamu paham betul cara mengatur uang. 🎉'
+      : 'Bagus! Terus belajar mengatur keuangan ya. 💪'}</p>
+    ${bonus ? '<div class="reward">Bonus sempurna +100 skor!</div>' : ''}
+    <button class="btn green" id="quizDone">Lanjutkan</button>
+  `);
+
+  speak(benar === total
+    ? 'Sempurna! Kamu menjawab semua soal dengan benar.'
+    : 'Kuis selesai. Kamu menjawab ' + benar + ' dari ' + total + ' soal dengan benar.');
+
+  document.getElementById('quizDone').addEventListener('click', () => {
+    hideModal();
+    quizState = null;
+    updateHUD(); saveGame();
+    if (cb) cb();
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * 12. TUTORIAL
+ * ------------------------------------------------------------------ */
+function showTutorial(){
+  const wasPaused = paused;
+  showModal(`
+    <h2>📖 Cara Bermain & Mencari Harta</h2>
+
+    <div class="tutStep"><div class="num">1</div>
+      <p><b>Gerakkan karakter</b> dengan joystick di kiri bawah, atau tombol WASD / panah di keyboard.</p></div>
+
+    <div class="tutStep"><div class="num">2</div>
+      <p><b>Dekati bangunan</b> (Warung, Kedai Kopi, Resto, dll). Tombol kuning di kanan bawah akan muncul — tekan untuk berinteraksi.</p></div>
+
+    <div class="tutStep"><div class="num">3</div>
+      <p><b>Misi wajib</b>: beli Paket Makan + Minum di WARUNG setiap hari. Kalau dilewatkan, nyawa berkurang!</p></div>
+
+    <div class="tutStep"><div class="num">4</div>
+      <p><b>Misi opsional</b>: ngopi, nyemil, resto, timezone, paket liburan — menambah <i>satisfy</i> dan skor.</p></div>
+
+    <div class="tutStep"><div class="num">5</div>
+      <p><b>🔍 MENCARI HARTA KARUN:</b> lihat <b>kompas emas</b> di kanan atas — panahnya menunjuk ke peti harta terdekat dan menunjukkan jaraknya. Peti ditandai <b>cahaya keemasan</b>, <b>cincin berkilau</b>, dan <b>koin emas yang melayang berputar</b>.</p></div>
+
+    <div class="tutStep"><div class="num">6</div>
+      <p><b>Dekati peti</b> hingga tombol <b>“Buka Peti Harta 💎”</b> muncul. Tekan tombol itu — pengisi suara akan membacakan materi keuangan untukmu, dan kamu mendapat <b>+150 skor</b> plus <b>Rare Item</b>.</p></div>
+
+    <div class="tutStep"><div class="num">7</div>
+      <p><b>Kuis</b> muncul setiap 5 hari sekali (5 soal). Jawaban benar = +100 skor.</p></div>
+
+    <div class="tutStep"><div class="num">8</div>
+      <p>Tekan <b>“Akhiri Hari”</b> untuk menyelesaikan hari. Permainan berakhir setelah <b>30 hari</b> (1 bulan simulasi).</p></div>
+
+    <div class="row2">
+      <button class="btn green" id="tutClose" style="flex:1">Mengerti! 🚀</button>
+      <button class="btn yellow" id="tutFind" style="flex:1">🔍 Cari Harta</button>
+    </div>
+  `);
+
+  document.getElementById('tutClose').addEventListener('click', () => {
+    hideModal();
+    if (wasPaused) paused = false;
+    speak('Selamat bermain! Gunakan kompas emas untuk menemukan peti harta karun.');
+  });
+  document.getElementById('tutFind').addEventListener('click', () => {
+    hideModal();
+    if (wasPaused) paused = false;
+    findNearestTreasure();
+  });
+}
+
+function findNearestTreasure(){
+  if (!player) return;
+  let nearest = null, nd = Infinity;
+  chestObjects.forEach(c => {
+    if (c.opened) return;
+    const d = Math.hypot(c.x - player.position.x, c.z - player.position.z);
+    if (d < nd){ nd = d; nearest = c; }
+  });
+  if (!nearest){ toast('Semua peti harta sudah kamu temukan! 🎉'); return; }
+
+  const dx = nearest.x - player.position.x;
+  const dz = nearest.z - player.position.z;
+  const dir = Math.abs(dx) > Math.abs(dz)
+    ? (dx > 0 ? 'kanan' : 'kiri')
+    : (dz < 0 ? 'atas (depan)' : 'bawah (belakang)');
+
+  toast(`💎 Harta terdekat: ${Math.round(nd)} meter ke arah ${dir}`, 3200);
+  speak('Harta terdekat berjarak sekitar ' + Math.round(nd) + ' meter. Ikuti panah kompas emas di kanan atas layar.');
+}
+
+/* ------------------------------------------------------------------ *
+ * 13. AKHIR PERMAINAN
+ * ------------------------------------------------------------------ */
+function endGame(win){
+  paused = true;
+  const moneyBonus = Math.max(0, Math.floor(S.money / 5000));
+  const total = S.score + moneyBonus;
+
+  let stars = 1;
+  if (total >= 1500) stars = 2;
+  if (total >= 2500) stars = 3;
+  if (total >= 3500) stars = 4;
+  if (total >= 4500) stars = 5;
+
+  const judul = win
+    ? (stars >= 4 ? '🏆 LUAR BIASA!' : '🎉 SIMULASI SELESAI!')
+    : '💔 GAME OVER — Nyawa Habis';
+
+  showModal(`
+    <h2>${judul}</h2>
+    <div class="stars">${'⭐'.repeat(stars)}${'☆'.repeat(5 - stars)}</div>
+    <div class="bigScore">${total}</div>
+    <p style="text-align:center;margin-bottom:14px">Total Skor Akhir</p>
+
+    <div class="reportRow"><span>Misi wajib selesai</span><b>${S.stats.wajib}</b></div>
+    <div class="reportRow"><span>Misi wajib terlewat</span><b>${S.stats.skipped}</b></div>
+    <div class="reportRow"><span>Misi opsional selesai</span><b>${S.stats.optional}</b></div>
+    <div class="reportRow"><span>Rare item / harta ditemukan</span><b>${S.stats.treasures}</b></div>
+    <div class="reportRow"><span>Kuis benar</span><b>${S.stats.quizCorrect} / ${S.stats.quizTotal}</b></div>
+    <div class="reportRow"><span>Sisa uang</span><b>${fmt(S.money)} (+${moneyBonus})</b></div>
+    <div class="reportRow"><span>Hari tercapai</span><b>${S.day} / ${TOTAL_DAYS}</b></div>
+
+    <p style="text-align:center;margin-top:14px;font-size:13px">
+      ${stars >= 4
+        ? 'Kamu sangat hebat mengatur keuangan! Pertahankan kebiasaan ini di dunia nyata. 🌟'
+        : 'Terus berlatih! Dahulukan kebutuhan, catat pengeluaran, dan sisihkan tabungan. 💪'}
+    </p>
+
+    <div class="row2">
+      <button class="btn green" id="btnAgain" style="flex:1">🔄 Main Lagi</button>
+      <button class="btn grey" id="btnMenu" style="flex:1">🏠 Menu</button>
+    </div>
+  `);
+
+  speak(win
+    ? 'Selamat! Simulasi satu bulan selesai. Total skormu ' + total + ' poin.'
+    : 'Permainan berakhir karena nyawamu habis. Ayo coba lagi!');
+
+  document.getElementById('btnAgain').addEventListener('click', () => {
+    clearSave(); location.reload();
+  });
+  document.getElementById('btnMenu').addEventListener('click', () => {
+    clearSave(); location.reload();
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * 14. MULAI GAME
+ * ------------------------------------------------------------------ */
+function startGame(state){
+  S = state;
+  menuEl.classList.add('hidden');
+  hudEl.classList.remove('hidden');
+
+  /* terapkan peti yang sudah dibuka sebelumnya */
+  if (S.treasures && S.treasures.length){
+    chestObjects.forEach(c => {
+      if (S.treasures.indexOf(c.id) >= 0){
+        c.opened = true;
+        c.anim = 1;
+        c.lidPivot.rotation.x = -1.25;
+        c.light.intensity = 0;
+        c.ring.material.opacity = 0;
+        interactables.forEach(it => { if (it.chest === c) it.hidden = true; });
+      }
+    });
+  }
+
+  resetDaily();
+  addIncome();
+  updateHUD();
+  saveGame();
+
+  setTimeout(() => {
+    speak('Selamat datang di dunia keuangan! Gunakan kompas emas untuk menemukan peti harta karun.');
+  }, 500);
+
+  if (!S._tutorialShown){
+    S._tutorialShown = true;
+    setTimeout(showTutorial, 700);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 15. MENU SETUP
+ * ------------------------------------------------------------------ */
+let selDiff = 'mudah';
+let selInc = 'harian';
+
+function updateMenuIncome(){
+  const d = DIFF[selDiff];
+  document.getElementById('incH').textContent = fmt(d.incomes.harian);
+  document.getElementById('incM').textContent = fmt(d.incomes.mingguan);
+  document.getElementById('incB').textContent = fmt(d.incomes.bulanan);
+}
+
+document.querySelectorAll('#diffRow .diffOpt').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('#diffRow .diffOpt').forEach(x => x.classList.remove('sel'));
+    el.classList.add('sel');
+    selDiff = el.getAttribute('data-diff');
+    updateMenuIncome();
+  });
+});
+
+document.querySelectorAll('#incRow .incOpt').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('#incRow .incOpt').forEach(x => x.classList.remove('sel'));
+    el.classList.add('sel');
+    selInc = el.getAttribute('data-inc');
+  });
+});
+
+document.getElementById('btnStart').addEventListener('click', () => {
+  clearSave();
+  startGame(newState(selDiff, selInc));
+});
+
+document.getElementById('btnLoad').addEventListener('click', () => {
+  const saved = loadGame();
+  if (!saved){ toast('Tidak ada simpanan. Mulai permainan baru dulu ya.'); return; }
+  startGame(saved);
+});
+
+document.getElementById('btnHow').addEventListener('click', () => {
+  /* tampilkan tutorial dari menu (tanpa memulai game) */
+  modalEl.classList.remove('hidden');
+  showModal(`
+    <h2>📖 Panduan Cepat</h2>
+    <div class="tutStep"><div class="num">1</div>
+      <p>Gerakkan karakter dengan joystick (mobile) atau WASD / panah (keyboard).</p></div>
+    <div class="tutStep"><div class="num">2</div>
+      <p>Dekati bangunan, lalu tekan tombol kuning untuk berinteraksi.</p></div>
+    <div class="tutStep"><div class="num">3</div>
+      <p>Beli Paket Makan + Minum setiap hari di WARUNG (misi wajib).</p></div>
+    <div class="tutStep"><div class="num">4</div>
+      <p>Ikuti <b>kompas emas</b> di kanan atas untuk menemukan peti harta karun yang berkilau dan mengeluarkan koin melayang.</p></div>
+    <div class="tutStep"><div class="num">5</div>
+      <p>Saat peti terbuka, pengisi suara membacakan materi keuangan. Kamu dapat skor + rare item!</p></div>
+    <div class="tutStep"><div class="num">6</div>
+      <p>Kuis 5 soal muncul setiap 5 hari. Permainan selesai setelah 30 hari.</p></div>
+    <button class="btn green" onclick="hideModal()" style="margin-top:10px">Tutup</button>
+  `);
+  modalEl.classList.remove('hidden');
+});
+
+/* tombol HUD */
+document.getElementById('btnEndDay').addEventListener('click', requestEndDay);
+document.getElementById('btnTutorial').addEventListener('click', showTutorial);
+
+/* resize */
+window.addEventListener('resize', () => {
+  if (!renderer) return;
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* ------------------------------------------------------------------ *
+ * 16. BOOT
+ * ------------------------------------------------------------------ */
+(function boot(){
+  initThree();
+  setupJoystick();
+  updateMenuIncome();
+
+  /* cek save yang ada */
+  const saved = loadGame();
+  const loadBtn = document.getElementById('btnLoad');
+  if (!saved){
+    loadBtn.style.opacity = '0.55';
+    loadBtn.textContent = '💾 (Kosong)';
+  } else {
+    loadBtn.textContent = `💾 Lanjutkan (Hari ${saved.day})`;
+  }
+
+  /* animasi idle kamera di menu */
+  let menuT = 0;
+  setInterval(() => {
+    if (S) return;
+    menuT += 0.004;
+    if (camera) camera.position.set(Math.sin(menuT) * 26, 16, Math.cos(menuT) * 26 + 6);
+    if (camera) camera.lookAt(0, 2, 0);
+  }, 33);
+})();
+</script>
+</body>
+</html>
